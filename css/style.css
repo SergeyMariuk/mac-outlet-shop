@@ -1,0 +1,251 @@
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+}
+
+.main-container{
+    padding: 0 1em;
+    margin: 0 auto;
+    max-width: 1200px;
+    min-width: 700px;
+}
+
+.top{
+    display: flex;
+    justify-content: space-between;
+    margin: 1em 0;
+}
+
+.cart{
+    height: 26px;
+    width: 26px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: relative;
+}
+
+.cart img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 15px;
+}
+
+.cart .number{
+    color: #fff;
+    text-align: center;
+    position: relative;
+    top: -2px;
+    left: -12px;
+    font-size: small;
+    z-index: 1;
+}
+
+.cart .number::before{
+    display: block;
+    content: '';
+    background: #0e49b5;
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
+    position: relative;
+    top: 14px;
+    left: 5px;
+    z-index: -1;
+}
+
+header{
+    position: relative;
+}
+
+.addFromBannerBtn{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    background-color: #0e49b5;
+    border: none;
+    border-radius: 4px;
+    padding: .5em 1em;
+}
+
+.addFromBannerBtn:active{
+    text-shadow: 1px 1px 2px #010a1b;
+    box-shadow: inset 1px 1px 2px #010a1b
+}
+
+.search-container{
+    display: flex;
+    box-shadow: 0px 1px 5px #e0e0e0, 0px -1px 5px #e0e0e0;
+    border-radius: 4px;
+    padding: 0;
+    margin: 1em 0;
+}
+
+.search{
+    width: 100%;
+    padding: .5em;
+    padding: 0;
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    outline:none;
+    border: none;
+}
+
+.search-icon-wrapper,
+.filter-icon-wrapper,
+.sort-icon-wrapper{
+    height: 32px;
+    width: 32px;
+}
+
+.search-icon,
+.filter-icon,
+.sort-icon{
+    margin: 6px 6px;
+    height: 20px;
+}
+
+.item-list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-bottom: 1em;
+}
+
+.card{
+    max-width: 100%;
+    height: 100%;
+    padding: 1em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.like{
+    position: relative;
+    height: 24px;
+}
+
+.like-empty{
+    background-image: url("../img/icons/like_empty.svg");
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.like-filled{
+    background-image: url("../img/icons/like_empty.svg"),
+    url("../img/icons/like_filled.svg");
+    background-repeat: no-repeat, no-repeat;
+    background-position: right, right;
+}
+
+.picture img{
+    width: 100%;
+}
+
+.card .name{
+    font-weight: bold;
+    text-align: center;
+    font-size: 24px;
+}
+
+.card .remainder{
+    display: flex;
+    justify-content: center;
+    margin: .5em 0;
+}
+
+.remainder-icon-available{
+    background-image: url("../img/icons/check.svg");
+    height: 20px;
+    width: 20px;
+    margin-right: .5em;
+}
+
+.remainder-icon-unavailable{
+    background-image: url("../img/icons/close.svg");
+    height: 20px;
+    width: 20px;
+    margin-right: .5em;
+}
+
+.remainder span{
+    font-size: 14px;
+    color: #767272;
+}
+
+.remainder .remainder-number,
+.price span{
+    font-weight: bold;
+}
+
+.price{
+    text-align: center;
+    font-size: 14px;
+    color: #767272;
+}
+
+.button-wrapper{
+    text-align: center;
+    position: relative;
+    height: 34px;
+    margin: .5em;
+}
+
+.addFromCardBtn{
+    color: #fff;
+    background-color: #0e49b5;
+    border: none;
+    border-radius: 4px;
+    padding: .5em 1em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.addFromCardBtn:active{
+    text-shadow: 1px 1px 2px #010a1b;
+    box-shadow: inset 1px 1px 2px #010a1b
+}
+
+.card-footer{
+    background-color: #dae2ea;
+    max-width: 100%;
+    display: flex;
+    padding: 1em;
+    font-size: 14px;
+    color: #3b3e66;
+    justify-content: space-between;
+}
+
+.card-wrapper{
+    width: 30%;
+    box-shadow: 0px 1px 5px #e0e0e0, 0px -1px 5px #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.positive-reviews,
+.orders{
+    margin: 0;
+    margin-left: .5em;
+}
+
+.positive-reviews span,
+.orders span{
+    font-weight: bold;
+}
+
+.review-wrapper{
+    display: flex;
+}
