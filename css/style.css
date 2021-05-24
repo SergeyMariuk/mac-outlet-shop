@@ -4,6 +4,10 @@
 	box-sizing: border-box;
 }
 
+html{
+    font-family: 'Roboto', sans-serif;
+}
+
 .main-container{
     padding: 0 1em;
     margin: 0 auto;
@@ -111,6 +115,7 @@ header{
 }
 
 .item-list{
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -259,4 +264,121 @@ header{
 
 .review-wrapper{
     display: flex;
+}
+
+.main-wrapper{
+    display: flex;
+    justify-content: space-between;
+}
+
+.accordion-filter{
+    width: 30%;
+    height: 100%;
+    box-shadow: 0px 1px 5px #e0e0e0, 0px -1px 5px #e0e0e0;
+    border-radius: 4px;
+    margin-right: 1em;
+    margin-top: 1em;
+    display: none;
+}
+
+
+.section-wrapper{
+    display: flex;
+    align-items: center;
+    background-color: #edf3ff;
+    border-bottom: 1px solid #ddd;
+    font-size: 18px;
+}
+
+.accordion{
+    background-color: #edf3ff;
+    color: #000;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+}
+
+.arrow{
+    height: 28px;
+    width: 28px;
+    background-image: url('../img/icons/arrow_closed.svg');
+    background-size: cover;
+    margin-right: 1em;
+}
+
+.arrow.opened{
+    background-image: url('../img/icons/arrow_opened.svg');
+    background-repeat: no-repeat;
+    width: 35px;
+}
+
+.filter-display{
+    border-bottom: none;
+}
+
+.active{
+    background-color: #fff;
+}
+
+.panel{
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.panel-filter-display{
+    border-bottom: none;
+    border-top: 1px solid #ddd;
+}
+
+.from-wrapper,
+.to-wrapper{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 .5em;
+    align-items:center;
+}
+
+.from,
+.to{
+    box-shadow: 0px 1px 5px #e0e0e0, 0px -1px 5px #e0e0e0;
+    border-radius: 4px;
+    padding: 0;
+    border-left: none;
+    border-right: none;
+    outline: none;
+    border: none;
+    height: 1.75em;
+    text-align: center;
+    margin: 0 0.5em;
+    width: 60%;
+}
+
+.color-panel-wrapper,
+.memory-panel-wrapper{
+    padding: .5em 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.color-wrapper,
+.memory-wrapper,
+.os-wrapper,
+.display-wrapper{
+    display: flex;
+    width: 50%;
+    margin: .5em 0;
+}
+
+.color-name,
+.memory-name,
+.os-name{
+    margin-left: .5em;
 }
