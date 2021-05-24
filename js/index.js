@@ -27,7 +27,10 @@ items.forEach(element => {
             </div>
             <div class="price">Price: <span>${element.price}</span> $</div>
             <div class="button-wrapper">
-                <button class="addFromCardBtn">Add to cart</button>
+                ${(function(){
+                    if(element.orderInfo.inStock >= 1) return '<button class="add-from-card-btn">Add to cart</button>';
+                    else return '<button class="add-from-card-btn-disabled">Add to cart</button>';
+                })()}
             </div>
         </div>
     </div>

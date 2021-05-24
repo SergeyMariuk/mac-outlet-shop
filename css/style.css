@@ -198,7 +198,7 @@ header{
     margin: .5em;
 }
 
-.addFromCardBtn{
+.add-from-card-btn{
     color: #fff;
     background-color: #0e49b5;
     border: none;
@@ -209,9 +209,20 @@ header{
     transform: translateX(-50%);
 }
 
-.addFromCardBtn:active{
+.add-from-card-btn:active{
     text-shadow: 1px 1px 2px #010a1b;
     box-shadow: inset 1px 1px 2px #010a1b
+}
+
+.add-from-card-btn-disabled{
+    color: #fff;
+    background-color: #ddd;
+    border: none;
+    border-radius: 4px;
+    padding: .5em 1em;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .card-footer{
