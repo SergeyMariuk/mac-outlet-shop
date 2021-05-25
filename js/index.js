@@ -10,7 +10,7 @@ const renderCard = function(element){
     const cardWrapper = document.createElement('div');
     cardWrapper.className = 'card-wrapper';
     cardWrapper.innerHTML = 
-    `<div class="card">
+    `<div class="card" data-id=${element.id}>
         <div class="flex-wrapper">
             <div class="like like-empty"></div>
             <div class="picture">
@@ -55,14 +55,71 @@ const fillStore = function(elements){
 }
 fillStore(items);
 
-// Sets like/unlike
-const like = document.querySelectorAll('.like');
-like.forEach(element => {
-    element.onclick = function(){
-        if(element.className.includes('like-filled')) element.className = 'like like-empty'
-        else element.className = 'like like-empty like-filled'
-        }
-});
+// Render modale window.
+const renderModal = function(item, orders){
+    const modalWindow = document.createElement('div');
+    modalWindow.className = 'modal-window';
+    modalWindow.innerHTML = 
+    `
+    <div class="modal-picture">
+        <img src="img/${item.imgUrl}" alt="item picture">
+    </div>
+    <div class="modal-details">
+        <p class="name">${item.name}</p>
+        <div class="modal-review-wrapper">
+            <div class="review-sectio">
+                <div class="like-red">
+                    <img src="img/icons/like_filled.svg" alt="like_filled">
+                </div>
+                <div class="positive-reviews"><span>${item.orderInfo.reviews}%</span>Positive reviews<br>Above avarage</div>
+            </div>
+            <div class="orders"><span>${orders}</span><br>orders</div>
+        </div>
+        <p>Color: <span>${item.color}</span></p>
+        <p>Operating System: <span>${item.os}</span></p>
+        <p>Chip: <span>${item.chip.name}</span></p>
+        <p>Height: <span>${item.size.height} cm</span></p>
+        <p>Width: <span>${item.size.width} cm</span></p>
+        <p>Depth: <span>${item.size.depth} cm</span></p>
+        <p>Weight: <span>${item.size.weight} g</span></p>
+        <div class="price"></div>
+    </div>
+    <div class="modale-price">
+        <div class="amount">$ ${item.price}</div>
+        <div class="remainder">Stock: ${item.orderInfo.inStock} pcs</div>
+        ${(function(){
+            if(item.orderInfo.inStock >= 1) return '<button>Add to cart</button>';
+            else return '<button class="disabled">Add to cart</button>';
+        })()}
+    </div>
+    `
+    return modalWindow;
+}
+
+// Sets like/unlike and opens/closes modal window.
+window.onclick = e => {
+    const backShadow = document.querySelector('.back-shadow');
+    if(e.target.className.includes('like')){
+        const likeElem = e.target;
+        if(likeElem.className.includes('like-filled')) likeElem.className = 'like like-empty'
+        else likeElem.className = 'like like-empty like-filled'
+    }
+    else if(e.target.className.includes('add-from-card-btn')){
+        // console.log(items[e.target.closest('.card-wrapper').firstChild.getAttribute('data-id') - 1])
+        return
+    }
+    else if(e.target.closest('.card-wrapper')){
+        const CardWrapper = e.target.closest('.card-wrapper');
+        // console.log((items[CardWrapper.firstChild.getAttribute('data-id') - 1]))
+        backShadow.style.display = "block";
+        document.body.style.overflow = "hidden";
+        document.querySelector('.back-shadow').appendChild(renderModal(items[CardWrapper.firstChild.getAttribute('data-id') - 1], CardWrapper.querySelector('.orders span').innerHTML));
+    }
+    else if(e.target.className.includes('back-shadow')){
+        backShadow.style.display = "none";
+        document.body.style.overflow = "visible";
+    }
+}
 
 // Accordion menu.
 const acc = document.getElementsByClassName("section-wrapper");
@@ -100,7 +157,6 @@ filterIcon.onclick = function(){
         accordionFilter.style.display = "none";
         itemList.style.width = "100%";
         cardWrapper.forEach(element => element.style.width = "30%");
-        cardWrapper.style.width = "30%";
     }else{
         accordionFilter.style.display = "block";
         itemList.style.width = "64%";
@@ -200,11 +256,6 @@ const fillOsFlter = function(elements){
 }
 
 fillOsFlter(getOs(items));
-
-
-
-
-
 
 const displayFilterArr = [
     '2-5 inch',
