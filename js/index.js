@@ -210,7 +210,6 @@ window.onchange = e => {
         }
         runFilter(items, param)
     }
-    console.log(param)
 }
 
 // Creates items array according to the filter parameters and fill store.
