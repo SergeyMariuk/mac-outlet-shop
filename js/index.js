@@ -3,7 +3,13 @@ function getRandomInt() {
     min = Math.ceil(100);
     max = Math.floor(1000);
     return Math.floor(Math.random() * (max - min) + min);
-  }
+}
+
+// Verifies if element visible on a page.
+const isVisible = function(element){
+    if(!(element.offsetParent === null)) return true;
+    return false
+}
 
 // Renders single card.
 const renderCard = function(element){
@@ -49,9 +55,18 @@ const renderCard = function(element){
 
 // Fills store by rendered cards.
 const fillStore = function(elements){
+    const itemList = document.querySelector('.item-list');
+    itemList.innerHTML = '';
     elements.forEach(element => { 
         document.querySelector('.item-list').appendChild(renderCard(element)) 
-    });    
+    }); 
+
+    if(isVisible(document.querySelector('.accordion-filter'))){
+        itemList.style.width = "64%";
+        document.querySelectorAll('.card-wrapper').forEach(card => {
+            card.style.width = "45%";
+        })
+    }
 }
 fillStore(items);
 
@@ -95,19 +110,33 @@ const renderModal = function(item, orders){
     `
     return modalWindow;
 }
+const getMaxAndMinPrice = function(){
+    const tmpPriceArr = [];
+    items.forEach(element => {
+        tmpPriceArr.push(element.price)
+    })
 
-// Sets like/unlike and opens/closes modal window.
+    const maxPrice = Math.max(...tmpPriceArr);
+    const minPrice = Math.min(...tmpPriceArr);
+
+    return [minPrice, maxPrice]
+}
+// Click event.
+const param = {};
 window.onclick = e => {
     const backShadow = document.querySelector('.back-shadow');
+    // Sets like/unlike
     if(e.target.className.includes('like')){
         const likeElem = e.target;
         if(likeElem.className.includes('like-filled')) likeElem.className = 'like like-empty'
         else likeElem.className = 'like like-empty like-filled'
     }
+    // Adds item to card
     else if(e.target.className.includes('add-from-card-btn')){
         // console.log(items[e.target.closest('.card-wrapper').firstChild.getAttribute('data-id') - 1])
         return
     }
+    // Opens modal window
     else if(e.target.closest('.card-wrapper')){
         const CardWrapper = e.target.closest('.card-wrapper');
         // console.log((items[CardWrapper.firstChild.getAttribute('data-id') - 1]))
@@ -115,10 +144,138 @@ window.onclick = e => {
         document.body.style.overflow = "hidden";
         document.querySelector('.back-shadow').appendChild(renderModal(items[CardWrapper.firstChild.getAttribute('data-id') - 1], CardWrapper.querySelector('.orders span').innerHTML));
     }
+    // Closes modal window
     else if(e.target.className.includes('back-shadow')){
         backShadow.style.display = "none";
         document.body.style.overflow = "visible";
     }
+
+    // Collects filter parameters based on checkbox only and runs filer
+    if(e.target.type === 'checkbox'){
+        let value = e.target.nextElementSibling.innerHTML
+        let key = e.target.closest('.panel').previousElementSibling.querySelector('button.accordion').innerText
+        if(!(Object.keys(param).includes(key)))
+            param[key] = [value]
+        else if(Object.keys(param).includes(key) && !(param[key].includes(value)))
+            param[key].push(value)
+        else if(param[key].includes(value))
+            param[key] = param[key].filter(elem => elem != value)
+        runFilter(items, param)
+    }
+}
+
+window.onchange = e => {
+    // Collects filter parameters based on input type only and runs filter
+    if(e.target.type === 'text' || e.target.type === 'number'){
+        if(e.target.className === 'search'){
+            param.search = e.target.value.trim().toLowerCase();
+            runFilter(items, param);
+        }
+    }
+    if(e.target.type === 'number'){
+        let fromPrice = getMaxAndMinPrice()[0];
+        let toPrice = getMaxAndMinPrice()[1];
+        if(e.target.className === 'from'){            
+            if(e.target.value === ''){
+                param.fromPrice = null;
+            }else if(e.target.value < fromPrice){
+                param.fromPrice = fromPrice;
+                e.target.value = fromPrice;
+            }else if(document.querySelector('.to').value !== '' && e.target.value > Number(document.querySelector('.to').value)){
+                param.fromPrice = Number(document.querySelector('.to').value);
+                e.target.value = param.fromPrice;
+            }else if(e.target.value > toPrice){
+                param.fromPrice = toPrice;
+                e.target.value = toPrice;
+            }else{
+            param.fromPrice = Number(e.target.value)
+            }
+            runFilter(items, param);
+        }
+        if(e.target.className === 'to'){
+            if(e.target.value === ''){
+                param.toPrice = null;
+            }else if(e.target.value > toPrice){
+                param.toPrice = toPrice;
+                e.target.value = toPrice;
+            }else if(document.querySelector('.from').value !== '' && e.target.value < Number(document.querySelector('.from').value)){
+                param.toPrice = Number(document.querySelector('.from').value);
+                e.target.value = param.toPrice;
+            }else if(e.target.value < fromPrice){
+                param.toPrice = fromPrice;
+                e.target.value = fromPrice;
+            }else{
+            param.toPrice = Number(e.target.value)
+            }
+        }
+        runFilter(items, param)
+    }
+    console.log(param)
+}
+
+// Creates items array according to the filter parameters and fill store.
+const runFilter = function(allGoods, param){
+    let filteredItem = []
+    allGoods.forEach(product => {
+        let isSearch = true;
+        let isFromPriceSet = true;
+        let isToPriceSet = true;
+        let isColorSet = true;
+        let isMemorySet = true;
+        let isOsSet = true;
+        let isDisplaySet = true;
+
+        if(param['search'] && param['search'] !== ''){
+            isSearch = false;
+            if(product.name.toLowerCase().includes(param['search'])) isSearch = true;
+        }
+        if(param['fromPrice'] && param['fromPrice'] !== null){
+            isFromPriceSet = false;
+            if(product.price >= param['fromPrice']) isFromPriceSet = true;
+        }
+
+        if(param['toPrice'] && param['toPrice'] !== null){
+            isToPriceSet = false;
+            if(product.price <= param['toPrice']) isToPriceSet = true;
+        }
+
+        if(param['Color'] && param['Color'].length){
+            isColorSet = false;
+            param['Color'].forEach(color => {
+                if(product.color.includes(color)) isColorSet = true;
+            })
+        }
+        if(param['Memory'] && param['Memory'].length){
+            isMemorySet = false
+            param['Memory'].forEach(memory => {
+                if(memory.replace(' Gb', '') === (String(product.storage))) isMemorySet = true;
+                if(memory.replace(' TB', '').length === 1){
+                    if((memory.replace(' TB', '')) * 1024 === product.storage) isMemorySet = true;
+                }
+            })
+        }
+        if(param['OS'] && param['OS'].length){
+            isOsSet = false
+            if(param['OS'].includes(product.os)) isOsSet = true
+        }
+        if(param['Display'] && param['Display'].length){
+            isDisplaySet = false;
+            let minDisplay = null;
+            let maxDisplay = null;
+            param['Display'].forEach(display => {
+                if(display === '+16 inch'){
+                    minDisplay = 16;
+                    maxDisplay = 16;
+                }else{
+                    minDisplay = display.split('-')[0];
+                    maxDisplay = display.split('-')[1].split(' ')[0]
+                }
+                if(product.display >= minDisplay && product.display < maxDisplay) isDisplaySet = true;
+            })
+        }
+        if(isSearch && isFromPriceSet && isToPriceSet && isColorSet && isMemorySet && isOsSet && isDisplaySet) filteredItem.push(product)
+    })
+    fillStore(filteredItem)
 }
 
 // Accordion menu.
@@ -141,26 +298,19 @@ for (let i = 0; i < acc.length; i++) {
   });
 }
 
-// Verifies if element visible on a page.
-const isVisible = function(element){
-    if(!(element.offsetParent === null)) return true;
-    return false
-}
-
-// Open filter after click on '.filter-icon' and rebuild '.item-list'.
+// Opens filter after click on '.filter-icon' and rebuild '.item-list'.
 const filterIcon = document.querySelector('.filter-icon');
 const accordionFilter = document.querySelector('.accordion-filter');
 const itemList = document.querySelector('.item-list');
-const cardWrapper = document.querySelectorAll('.card-wrapper');
 filterIcon.onclick = function(){
     if(isVisible(accordionFilter)){
         accordionFilter.style.display = "none";
         itemList.style.width = "100%";
-        cardWrapper.forEach(element => element.style.width = "30%");
+        document.querySelectorAll('.card-wrapper').forEach(element => element.style.width = "30%");
     }else{
         accordionFilter.style.display = "block";
         itemList.style.width = "64%";
-        cardWrapper.forEach(element => element.style.width = "45%");
+        document.querySelectorAll('.card-wrapper').forEach(element => element.style.width = "45%");
     }
 }
 
