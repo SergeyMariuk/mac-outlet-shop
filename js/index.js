@@ -11,6 +11,50 @@ const isVisible = function(element){
     return false
 }
 
+// Fil slider.
+const slider = function(){
+    const sliderImg = [
+        {
+            id: 33,
+            imgUrl: 'img/banners/air_pods_max_banner.jpg'
+        },
+        {
+            id: 32,
+            imgUrl: 'img/banners/airpods_pro_banner.png'
+        },
+        {
+            id: 29,
+            imgUrl: 'img/banners/apple_tv_banner.png'
+        },
+        {
+            id: 34,
+            imgUrl: 'img/banners/ipad_air_banner.jpg'
+        },
+        {
+            id: 18,
+            imgUrl: 'img/banners/iphone_12_banner.jpg'
+        },
+        {
+            id: 6,
+            imgUrl: 'img/banners/mac_book_banner.jpg'
+        },
+        {
+            id: 13,
+            imgUrl: 'img/banners/watch_banner.jpg'
+        },
+    ]
+
+    sliderImg.forEach(img => {
+        const sliderWrapper = document.createElement('div');
+        sliderWrapper.className = 'slider-wrapper';
+        sliderWrapper.innerHTML =
+        `<img src="${img.imgUrl}" alt="baner_#${img.id}" style="max-width: 1000px;">
+        <button class="addFromBannerBtn" id="${img.id}">Add to cart</button>`
+        document.querySelector('.slider').appendChild(sliderWrapper);
+    })
+}
+slider();
+
 // Renders single card.
 const renderCard = function(element){
     const cardWrapper = document.createElement('div');
@@ -164,14 +208,16 @@ window.onclick = e => {
     }
 }
 
-window.onchange = e => {
-    // Collects filter parameters based on input type only and runs filter
-    if(e.target.type === 'text' || e.target.type === 'number'){
-        if(e.target.className === 'search'){
-            param.search = e.target.value.trim().toLowerCase();
-            runFilter(items, param);
-        }
+// Collects search foeld parameter and runs filter.
+window.oninput = e => {
+    if(e.target.className === 'search'){
+        param.search = e.target.value.trim().toLowerCase();
+        runFilter(items, param);
     }
+}
+
+// Collects price filter parameters and runs filter.
+window.onchange = e => {
     if(e.target.type === 'number'){
         let fromPrice = getMaxAndMinPrice()[0];
         let toPrice = getMaxAndMinPrice()[1];

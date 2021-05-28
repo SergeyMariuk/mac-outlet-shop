@@ -21,6 +21,10 @@ html{
     margin: 1em 0;
 }
 
+.slider-wrapper{
+    position: relative;
+}
+
 .cart{
     height: 26px;
     width: 26px;
@@ -76,12 +80,12 @@ header{
     padding: .5em 1em;
 }
 
-/* .addFromBannerBtn:active,
+.addFromBannerBtn:active,
 .add-from-card-btn:active,
-.modale-price button{
+.modale-price button:active{
     text-shadow: 1px 1px 2px #010a1b;
     box-shadow: inset 1px 1px 2px #010a1b
-} */
+}
 
 .search-container{
     display: flex;
