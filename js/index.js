@@ -478,3 +478,13 @@ const fillDisplayFlter = function(elements){
 }
 
 fillDisplayFlter(displayFilterArr);
+
+const cartIcon = document.querySelector('.top .cart');
+cartIcon.onclick = function(){
+    const openedCart = document.querySelector('.cart-opened');
+    if(isVisible(openedCart)){
+        openedCart.style.display = "none";
+    }else{
+        openedCart.style.display = "block";
+    }
+}
