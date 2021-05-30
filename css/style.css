@@ -83,7 +83,7 @@ header{
 
 .addFromBannerBtn:active,
 .add-from-card-btn:active,
-.modale-price button:active{
+.modale-price .add-to-cart:active{
     text-shadow: 1px 1px 2px #010a1b;
     box-shadow: inset 1px 1px 2px #010a1b
 }

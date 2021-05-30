@@ -49,7 +49,7 @@ const slider = function(){
         sliderWrapper.className = 'slider-wrapper';
         sliderWrapper.innerHTML =
         `<img src="${img.imgUrl}" alt="baner_#${img.id}" style="max-width: 1000px;">
-        <button class="addFromBannerBtn" id="${img.id}">Add to cart</button>`
+        <button class="addFromBannerBtn add-to-cart" data-id="${img.id}">Add to cart</button>`
         document.querySelector('.slider').appendChild(sliderWrapper);
     })
 }
@@ -79,7 +79,7 @@ const renderCard = function(element){
             <div class="price">Price: <span>${element.price}</span> $</div>
             <div class="button-wrapper">
                 ${(function(){
-                    if(element.orderInfo.inStock >= 1) return '<button class="add-from-card-btn">Add to cart</button>';
+                    if(element.orderInfo.inStock >= 1) return `<button class="add-from-card-btn add-to-cart" data-id=${element.id}>Add to cart</button>`;
                     else return '<button class="add-from-card-btn-disabled">Add to cart</button>';
                 })()}
             </div>
@@ -147,7 +147,7 @@ const renderModal = function(item, orders){
         <div class="amount">$ ${item.price}</div>
         <div class="remainder">Stock: ${item.orderInfo.inStock} pcs</div>
         ${(function(){
-            if(item.orderInfo.inStock >= 1) return '<button>Add to cart</button>';
+            if(item.orderInfo.inStock >= 1) return `<button class="add-to-cart" data-id="${item.id}">Add to cart</button>`;
             else return '<button class="disabled">Add to cart</button>';
         })()}
     </div>
@@ -165,9 +165,97 @@ const getMaxAndMinPrice = function(){
 
     return [minPrice, maxPrice]
 }
+
+// Render single item in a cart.
+const addProductToCart = function(item){
+    const productWrapper = document.createElement('div');
+    productWrapper.className = 'product-wrapper';
+    productWrapper.innerHTML = 
+    `<div class="product-img">
+        <img src="img/${item.product.imgUrl}" alt="item picture">
+    </div>
+    <div class="product-name-price">
+        <div class="product-name">
+            <p>${item.product.name}</p>
+        </div>
+        <div class="product-price">
+            <p>$${item.product.price}</p>
+        </div>
+    </div>
+    <div class="action-block">
+        <div class="left" data-id="${item.product.id}">
+            ${(function(){
+                if(item.amount === 1) return '<div class="disabled-arrow"><img src="img/icons/disabled_arrow_left.svg" alt="arrow left"></img></div>'
+                else return '<img src="img/icons/arrow_left.svg" alt="arrow left"></img>'
+            })()}
+        </div>
+        <div class="amount">${item.amount}</div>
+        <div class="right" data-id="${item.product.id}">
+            ${(function(){
+                if(item.amount >= 4) return '<div class="disabled-arrow"><img src="img/icons/disabled_arrow_right.svg" alt="arrow right"></img></div>'
+                else return '<img src="img/icons/arrow_right.svg" alt="arrow right"></img>'
+            })()}
+        </div>
+        <div class="remove" data-id="${item.product.id}">
+            <img src="img/icons/remove.svg" alt="remove">
+        </div>
+    </div>`
+    renderTotals()
+    return productWrapper;
+}
+
+const renderTotals = function(){
+    const totals = totalsInCart();
+    const renderTotalAmmount = document.querySelector('.total-amount p span');
+    renderTotalAmmount.innerHTML = `${totals[0]} ptc`
+
+    const renderTotalPrice = document.querySelector('.total-price p span');
+    renderTotalPrice.innerHTML = `${totals[1]}$`
+}
+
+let cartArr = [];
+
+const getMacOutletLocalStorage = function(){
+    return JSON.parse(localStorage.getItem('cart'))
+}
+
+const setMacOutletLocalStorage = function(){
+    localStorage.setItem('cart', JSON.stringify(cartArr))
+}
+
+const fillCart = function(arr){
+    const cartNumber = document.querySelector('.cart .number');
+    const productsWrapper = document.querySelector('.products-wrapper').innerHTML = '';
+    document.querySelector('.products-wrapper').append(productsWrapper)
+    arr.forEach(elem => {
+        document.querySelector('.products-wrapper').appendChild(addProductToCart(elem))
+    })
+    cartNumber.innerHTML = totalsInCart()[0]
+    cartNumber.style.display = "Block";
+    setMacOutletLocalStorage();
+    if(arr.length === 0){
+        setMacOutletLocalStorage();
+        renderTotals()
+        cartNumber.style.display = "None";
+    }
+}
+
 // Click event.
 const param = {};
 window.onclick = e => {
+    // Closes cart by clicking outside.
+    console.log(e.target.className)
+    const opnCart = document.querySelector('.cart-opened')
+    if(isVisible(opnCart) && e.target.className != 'cart-icon' && e.target.className != 'number'){
+
+        if(e.target.closest('.cart-opened') === opnCart){
+            opnCart.style.display = "Block"
+        }
+        else{
+            opnCart.style.display = "None"
+        }
+    }
+
     const backShadow = document.querySelector('.back-shadow');
     // Sets like/unlike
     if(e.target.className.includes('like')){
@@ -176,14 +264,36 @@ window.onclick = e => {
         else likeElem.className = 'like like-empty like-filled'
     }
     // Adds item to card
-    else if(e.target.className.includes('add-from-card-btn')){
-        // console.log(items[e.target.closest('.card-wrapper').firstChild.getAttribute('data-id') - 1])
-        return
+    else if(e.target.className.includes('add-to-cart')){
+        items.forEach(el => {
+            if(Number(e.target.getAttribute('data-id')) === el.id){
+                let isNew = true;
+                cartArr.forEach(addedIem => {
+                    if(addedIem.id === el.id){
+                        if(addedIem.amount < 4){
+                            isNew = false;
+                            ++ addedIem.amount
+                        }
+                        else{
+                            isNew = false;
+                        }
+                        
+                    }
+                })
+                if(isNew){
+                    cartArr.push({
+                        id: el.id,
+                        amount: 1,
+                        product: el
+                    })
+                }
+            } 
+        })
+        fillCart(cartArr)
     }
     // Opens modal window
     else if(e.target.closest('.card-wrapper')){
         const CardWrapper = e.target.closest('.card-wrapper');
-        // console.log((items[CardWrapper.firstChild.getAttribute('data-id') - 1]))
         backShadow.style.display = "block";
         document.body.style.overflow = "hidden";
         document.querySelector('.back-shadow').appendChild(renderModal(items[CardWrapper.firstChild.getAttribute('data-id') - 1], CardWrapper.querySelector('.orders span').innerHTML));
@@ -192,6 +302,32 @@ window.onclick = e => {
     else if(e.target.className.includes('back-shadow')){
         backShadow.style.display = "none";
         document.body.style.overflow = "visible";
+    }
+    // CLicks on the left row in the cart.
+    if(e.target.parentNode.className === 'left'){
+        const productID = Number(e.target.parentNode.getAttribute('data-id'));
+        cartArr.forEach(elem => {
+            if(elem.product.id === productID && elem.amount > 1){
+                elem.amount --
+            }
+        })
+        fillCart(cartArr);
+    }
+    // CLicks on the right row in the cart.
+    else if (e.target.parentNode.className === 'right'){
+        const productID = Number(e.target.parentNode.getAttribute('data-id'));
+        cartArr.forEach(elem => {
+            if(elem.product.id === productID){
+                elem.amount ++
+            }
+        })
+        fillCart(cartArr);
+    }
+    // CLicks on the remove icon in the cart.
+    else if(e.target.parentNode.className === 'remove'){
+        const productID = Number(e.target.parentNode.getAttribute('data-id'));
+        cartArr = cartArr.filter(item => item.product.id != productID)
+        fillCart(cartArr);
     }
 
     // Collects filter parameters based on checkbox only and runs filer
@@ -214,6 +350,19 @@ window.oninput = e => {
         param.search = e.target.value.trim().toLowerCase();
         runFilter(items, param);
     }
+}
+
+// Render total items and price in the cart.
+const totalsInCart = function(){
+    let totalAmount = 0;
+    let totalPrice = 0;
+
+    cartArr.forEach(el => {
+        totalAmount += el.amount;
+        totalPrice += el.product.price * el.amount;
+    })
+
+    return [totalAmount, totalPrice]
 }
 
 // Collects price filter parameters and runs filter.
@@ -479,6 +628,7 @@ const fillDisplayFlter = function(elements){
 
 fillDisplayFlter(displayFilterArr);
 
+// Opens/closes cart by clicking on the cart icoon.
 const cartIcon = document.querySelector('.top .cart');
 cartIcon.onclick = function(){
     const openedCart = document.querySelector('.cart-opened');
@@ -487,4 +637,9 @@ cartIcon.onclick = function(){
     }else{
         openedCart.style.display = "block";
     }
+}
+
+if(getMacOutletLocalStorage()){
+    cartArr = getMacOutletLocalStorage();
+    fillCart(cartArr);
 }
